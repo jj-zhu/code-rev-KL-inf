@@ -185,6 +185,9 @@ def ksdd_lbfgs(x0, score, kernel='gaussian', bw=1.,
     # Call the L-BFGS-B optimizer to find the optimal particle locations
     # This line uses scipy's fmin_l_bfgs_b function to minimize the KSD loss
     # x: optimal particle positions, f: final loss value, d: additional info
+    # TODO:
+        # modify
+        #     x, f, d = fmin_l_bfgs_b(loss_and_grad, x.ravel(), maxiter=max_iter,
     x, f, d = fmin_l_bfgs_b(loss_and_grad, x.ravel(), maxiter=max_iter,
                             factr=tol, epsilon=1e-12, pgtol=1e-10,
                             callback=callback)
