@@ -77,6 +77,19 @@ def ksdd_lbfgs_gaussian(mean, cov, n_samples, score, kernel='gaussian', bw=1.,
     theta_init = np.concatenate([m.ravel(), L.ravel()])
     
     # Optimize
+    # Optimize using L-BFGS-B algorithm
+    # loss_and_grad_gaussian: function that returns the loss and gradient
+    # theta_init: initial parameter values (flattened array of m and L)
+    # maxiter: maximum number of iterations (consider increasing for better accuracy)
+    # factr: tolerance in the stopping criterion (consider decreasing for higher precision)
+    # epsilon: step size used for numerical approximation of the gradient (current value is good)
+    # pgtol: gradient norm must be less than pgtol before successful termination (consider decreasing for higher accuracy)
+    # callback: function called after each iteration (used for storing intermediate results)
+    
+    # Suggestions to increase optimization accuracy and run more iterations:
+    # 1. Increase maxiter (e.g., maxiter=1000 or higher)
+    # 2. Decrease factr (e.g., factr=1e7 or lower)
+    # 3. Decrease pgtol (e.g., pgtol=1e-12 or lower)
     theta_final, f, d = fmin_l_bfgs_b(loss_and_grad_gaussian, theta_init, maxiter=max_iter,
                                       factr=tol, epsilon=1e-12, pgtol=1e-10,
                                       callback=callback)

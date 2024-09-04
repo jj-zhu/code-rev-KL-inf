@@ -16,6 +16,8 @@ import numpy as np
 torch.manual_seed(1)
 
 
+# TODO: this score applied to tensor([[7.3198, 4.1910]], grad_fn=<SliceBackward0>)
+# returns NAN
 def make_mog(centers, vars, weights):
     weights = torch.tensor(weights)
     weights /= weights.sum()
@@ -24,10 +26,22 @@ def make_mog(centers, vars, weights):
         den = 0
         top = 0
         for center, var, weight in zip(centers, vars, weights):
-            exp = torch.exp(-0.5 * ((x - center) ** 2).sum(axis=1) / var)
+            diff = x - center
+            squared_diff = (diff ** 2).sum(axis=1)
+            exp_arg = -0.5 * squared_diff / var
+            exp = torch.exp(exp_arg)
             den += weight * exp
-            top += weight * exp[:, None] * (x - center) / var
-        return -top / den[:, None]
+            top += weight * exp[:, None] * diff / var
+            
+            print(f"Center: {center}, Var: {var}, Weight: {weight}")
+            print(f"Diff: {diff}, Squared diff: {squared_diff}")
+            print(f"Exp arg: {exp_arg}, Exp: {exp}")
+            print(f"Den: {den}, Top: {top}")
+            print("---")
+        
+        result = -top / den[:, None]
+        print(f"Final result: {result}")
+        return result
 
     def potential(x):
         op = 0.0
@@ -53,7 +67,7 @@ fac = 0.5
 centers = [
     torch.tensor([-1.0, -1.0]),
     torch.tensor([1.0, 1]),
-    torch.tensor([1, -1]),
+    # torch.tensor([1, -1]),
 ]
 variances = [var, var]
 weights = [0.5, 0.5]
